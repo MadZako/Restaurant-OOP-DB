@@ -1,0 +1,32 @@
+@startuml airportDesign
+!theme sketchy-outline
+
+class Restaurant {
+	name : String
+	menus : Array
+
+	addMenu()
+	removeMenu()
+}
+
+class Menu {
+	name : String
+	items : Array
+
+	addItem()
+	removeItem()
+}
+
+class Items {
+	name : String
+	price : Real
+	inStock : Boolean
+
+	changePrice()
+	toggleStock()
+}
+
+Restaurant --{ Menu
+Menu --{ Items
+
+@enduml

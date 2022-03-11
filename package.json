@@ -1,0 +1,27 @@
+{
+  "name": "restaurant-oop-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "test:report": "jest --coverage=true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadZako/restaurant-oop-db.git"
+  },
+  "author": "Zak Griffith Crowe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MadZako/restaurant-oop-db/issues"
+  },
+  "homepage": "https://github.com/MadZako/restaurant-oop-db#readme",
+  "dependencies": {
+    "better-sqlite3": "^7.5.0",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}
