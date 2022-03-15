@@ -18,7 +18,7 @@ class Menu {
 		linkedItems.forEach(item => {
 			const menuName = db.prepare('SELECT name FROM menus WHERE menuId = ?;').get(item.menuId)
 			let menuToUpdate = Menu.all.find(obj => obj.name === menuName.name);
-			let itemToAdd = Item.all.find(obj => obj.name === item.name)
+			let itemToAdd = Item.all.find(obj => obj.name === item.name);
 			menuToUpdate.addItem(itemToAdd);
 		})
 	}
