@@ -12,26 +12,36 @@ class Restaurant {
 		const menusInDB = db.prepare('SELECT * FROM menus;').all();
 		const linkedMenus = menusInDB.filter(obj => obj.restId > 0);
 		restaurantsInDB.forEach(restaurant => {
-			new Restaurant(restaurant.name);
+			const { id, name} = restaurant
+			new Restaurant(name, id);
 		})
 
 		linkedMenus.forEach(item => {
-			const restaurantName = db.prepare('SELECT name FROM restaurants WHERE id = ?;').get(item.restId);
-			let restaurantToUpdate = Restaurant.all.find(obj => obj.name === restaurantName.name);
-			let menuToAdd = Menu.all.find(obj => obj.name === item.name)
-			restaurantToUpdate.addMenu(menuToAdd);
+			const { menuId, restId } = item;
+			let restaurantToUpdate = Restaurant.all.find(obj => obj.index === restId);
+			let menuToUpdate = Menu.all.find(obj => obj.index === menuId);
+			restaurantToUpdate.addMenu(menuToUpdate);
+
+
+
+			// const restaurantName = db.prepare('SELECT name FROM restaurants WHERE id = ?;').get(item.restId);
+			// let restaurantToUpdate = Restaurant.all.find(obj => obj.name === restaurantName.name);
+			// let menuToAdd = Menu.all.find(obj => obj.name === item.name)
+			// restaurantToUpdate.addMenu(menuToAdd);
 		})
 	}
 
-	constructor (name) {
+	constructor (name, id) {
 		if (typeof name !== 'string') throw new Error('name must be string');
 		this.name = name;
-		Restaurant.all.push(this);
-		const dbIndex = db.prepare('SELECT id FROM restaurants WHERE name = ?;').get(name);
-		if (dbIndex === undefined) {
+		if (id) {
+			this.index = id;
+		} else {
+			this.index = (Restaurant.all.length + 1);
 			db.prepare('INSERT INTO restaurants (name) VALUES (?)').run(this.name);
 		}
-	}
+		Restaurant.all.push(this);
+		}
 
 	addMenu (menu) {
 		if (!(menu instanceof Menu)) throw new Error('has to be a Menu object')

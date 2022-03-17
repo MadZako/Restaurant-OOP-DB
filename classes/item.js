@@ -10,34 +10,47 @@ class Item {
 		db.prepare('CREATE TABLE IF NOT EXISTS items (itemId INTEGER, menuId INTEGER, name TEXT, price REAL, stock BOOLEAN, PRIMARY KEY (itemId));').run();
 		const itemsInDB = db.prepare('SELECT * FROM items;').all();
 		itemsInDB.forEach(item => {
-			const { name, price, stock} = item;
-			const newItem = new Item(name, price);
+			const { itemId, name, price, stock } = item;
+			const newItem = new Item(name, price, itemId);
 			if (stock === 0) newItem.toggleStock();
 		})
 	}
 
-	constructor (name, price) {
+	constructor (name, price, id) {
 		if (typeof name !== 'string') throw new Error('name must be string');
 		this.name = name;
 		this.price = price;
 		this.stock = true;
-		Item.all.push(this);
-
-		const dbIndex = db.prepare('SELECT itemId FROM items WHERE name = ?;').get(name);
-		if (dbIndex === undefined) {
+		if (id) {
+			this.index = id;
+		} else {
+			this.index = Item.all.length + 1;
 			db.prepare('INSERT INTO items (menuID, name, price, stock) VALUES (?, ?, ?, ?);').run(0, this.name, this.price, 1);
 		}
+		Item.all.push(this);
+	}
+
+	updateItem (name, price, stock) {
+		Item.all[this.index - 1] = {
+			index: this.index,
+			name: name,
+			price: price,
+			stock: stock,
+		};
+
+		let state = (stock) ? 1 : 0;
+		db.prepare('UPDATE items SET name = ?, price = ?, stock = ? WHERE itemId = ?;').run(name, price, state, this.index);
 	}
 
 	changePrice (newPrice) {
 		this.price = newPrice;
-		db.prepare('UPDATE items SET price = ? WHERE name = ?;').run(newPrice, this.name);
+		db.prepare('UPDATE items SET price = ? WHERE itemId = ?;').run(newPrice, this.index);
 	}
 
 	toggleStock () {
 		this.stock = !this.stock;
 		let state = (this.stock) ? 1 : 0;
-		db.prepare('UPDATE items SET stock = ? WHERE name = ?;').run(state, this.name);
+		db.prepare('UPDATE items SET stock = ? WHERE itemId = ?;').run(state, this.index);
 	}
 }
 

@@ -4,26 +4,26 @@ const Item = require('../classes/item.js');
 
 describe('Restaurant', () => {
 	test('create restaurants', () => {
-		let nobu = new Restaurant('Nobu');
-		expect(nobu.name).toBe('Nobu')
-		expect(nobu.menus.length).toBe(0)
+		let pizzaExpress = new Restaurant('pizza express');
+		expect(pizzaExpress.name).toBe('pizza express')
+		expect(pizzaExpress.menus.length).toBe(0)
 	})
 	test('create restaurants and add menus', () => {
-		let nobu = new Restaurant('Nobu');
-		let drinks = new Menu('drinks');
-		let mains = new Menu('mains');
-		nobu.addMenu(drinks);
-		nobu.addMenu(mains);
-		expect(nobu.menus.length).toBe(2);
+		let pizzaExpress = new Restaurant('pizza express');
+		let drinks = new Menu('bevearges');
+		let mains = new Menu('pizzas');
+		pizzaExpress.addMenu(drinks);
+		pizzaExpress.addMenu(mains);
+		expect(pizzaExpress.menus.length).toBe(2);
 	})
 	test('create restaurants and remove menus', () => {
-		let nobu = new Restaurant('Nobu');
-		let drinks = new Menu('drinks');
-		let mains = new Menu('mains');
-		nobu.addMenu(drinks);
-		nobu.addMenu(mains);
-		expect(nobu.menus.length).toBe(2);
-		nobu.removeMenu(drinks);
-		expect(nobu.menus.length).toBe(1);
+		let pizzaExpress = new Restaurant('pizza express');
+		let drinks = new Menu('bevearges');
+		let mains = new Menu('pizzas');
+		pizzaExpress.addMenu(drinks);
+		pizzaExpress.addMenu(mains);
+		expect(pizzaExpress.menus.length).toBe(2);
+		pizzaExpress.removeMenu(drinks);
+		expect(pizzaExpress.menus.length).toBe(1);
 	})
 })

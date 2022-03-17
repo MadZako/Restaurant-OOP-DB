@@ -12,41 +12,42 @@ class Menu {
 		const itemsInDB = db.prepare('SELECT * FROM items;').all();
 		const linkedItems = itemsInDB.filter(obj => obj.menuId > 0);
 		menusInDB.forEach(menu => {
-			new Menu(menu.name);
+			const { menuId, name } = menu
+			new Menu(name, menuId);
 		})
 
 		linkedItems.forEach(item => {
-			const menuName = db.prepare('SELECT name FROM menus WHERE menuId = ?;').get(item.menuId)
-			let menuToUpdate = Menu.all.find(obj => obj.name === menuName.name);
-			let itemToAdd = Item.all.find(obj => obj.name === item.name);
+			const { itemId, menuId } = item;
+			let menuToUpdate = Menu.all.find(obj => obj.index === menuId);
+			let itemToAdd = Item.all.find(obj => obj.index === itemId);
 			menuToUpdate.addItem(itemToAdd);
 		})
 	}
 
-	constructor (name) {
+	constructor (name, id) {
 		if (typeof name !== 'string') throw new Error('name must be string');
 		this.name = name;
-		Menu.all.push(this);
-
-		const dbIndex = db.prepare('SELECT menuId FROM menus WHERE name = ?;').get(name);
-		if (dbIndex === undefined) {
+		if (id) {
+			this.index = id;
+		} else {
+			this.index = (Menu.all.length + 1);
 			db.prepare('INSERT INTO menus (restId, name) VALUES (?, ?)').run(0, this.name);
-		}
+		}		
+		Menu.all.push(this);
 	}
 
 	addItem (item) {
 		if (!(item instanceof Item)) throw new Error('has to be an Item object')
 		this.items.push(item);
 
-		let menuIndex = db.prepare('SELECT menuId FROM menus WHERE name = ?;').get(this.name);
-		db.prepare('UPDATE items SET menuId = ? WHERE name = ?;').run(menuIndex.menuId, item.name);
+		db.prepare('UPDATE items SET menuId = ? WHERE itemId = ?;').run(this.index, item.index);
 	}
 
 	removeItem (item) {
 		if (!(item instanceof Item)) throw new Error('has to be an Item object')
 		this.items = this.items.filter(obj => obj !== item);
 
-		db.prepare('UPDATE items SET menuId = ? WHERE name = ?;').run(0, item.name);
+		db.prepare('UPDATE items SET menuId = ? WHERE itemId = ?;').run(0, item.index);
 	}
 }
 
