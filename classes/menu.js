@@ -3,7 +3,8 @@ const db = require('better-sqlite3')(path.join(__dirname, '../db.sqlite'))
 const Item = require('./item');
 
 class Menu {
-	static all = []
+	static all = [];
+	index;
 	name;
 	items = [];
 	static init = function () {
@@ -34,6 +35,13 @@ class Menu {
 			db.prepare('INSERT INTO menus (restId, name) VALUES (?, ?)').run(0, this.name);
 		}		
 		Menu.all.push(this);
+	}
+
+	updateMenu (name) {
+		if (typeof name !== 'string') throw new Error('name must be a string');
+		this.name = name;
+
+		db.prepare('UPDATE menus SET name = ? WHERE menuId = ?;').run(name, this.index);
 	}
 
 	addItem (item) {

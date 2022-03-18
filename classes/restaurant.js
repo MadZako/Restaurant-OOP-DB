@@ -4,7 +4,8 @@ const Menu = require('./menu');
 
 class Restaurant {
 	static all = [];
-	name
+	index;
+	name;
 	menus = [];
 	static init = function () {
 		db.prepare('CREATE TABLE IF NOT EXISTS restaurants (id INTEGER,	name TEXT, PRIMARY KEY (id));').run();
@@ -21,13 +22,6 @@ class Restaurant {
 			let restaurantToUpdate = Restaurant.all.find(obj => obj.index === restId);
 			let menuToUpdate = Menu.all.find(obj => obj.index === menuId);
 			restaurantToUpdate.addMenu(menuToUpdate);
-
-
-
-			// const restaurantName = db.prepare('SELECT name FROM restaurants WHERE id = ?;').get(item.restId);
-			// let restaurantToUpdate = Restaurant.all.find(obj => obj.name === restaurantName.name);
-			// let menuToAdd = Menu.all.find(obj => obj.name === item.name)
-			// restaurantToUpdate.addMenu(menuToAdd);
 		})
 	}
 
@@ -41,7 +35,14 @@ class Restaurant {
 			db.prepare('INSERT INTO restaurants (name) VALUES (?)').run(this.name);
 		}
 		Restaurant.all.push(this);
-		}
+	}
+
+	updateRestaurant (name) {
+		if (typeof name !== 'string') throw new Error('name must be a string');
+		this.name = name;
+
+		db.prepare('UPDATE restaurants SET name = ? WHERE id = ?;').run(name, this.index);
+	}
 
 	addMenu (menu) {
 		if (!(menu instanceof Menu)) throw new Error('has to be a Menu object')

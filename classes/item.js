@@ -2,10 +2,11 @@ const path = require('path')
 const db = require('better-sqlite3')(path.join(__dirname, '../db.sqlite'))
 
 class Item {
-	static all = []
-	name
-	price
-	stock
+	static all = [];
+	index;
+	name;
+	price;
+	stock;
 	static init = function () {
 		db.prepare('CREATE TABLE IF NOT EXISTS items (itemId INTEGER, menuId INTEGER, name TEXT, price REAL, stock BOOLEAN, PRIMARY KEY (itemId));').run();
 		const itemsInDB = db.prepare('SELECT * FROM items;').all();
